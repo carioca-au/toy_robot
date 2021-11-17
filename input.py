@@ -1,4 +1,4 @@
-from project.command import Command
+from command import Command
 
 
 def command_input():

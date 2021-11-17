@@ -1,4 +1,4 @@
-from project.robot import Robot
+from robot import Robot
 
 
 class Command:
