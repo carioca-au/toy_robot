@@ -1,6 +1,6 @@
 import unittest
 
-from project.command import Command
+from command import Command
 
 BOUNDARY = '*********************************************************************************************************'
 
