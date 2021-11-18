@@ -1,0 +1,2 @@
+pytest==6.2.5
+pathlib==1.0.1

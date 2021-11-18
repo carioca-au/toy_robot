@@ -1,45 +1,53 @@
+import sys
+from pathlib import Path
+
 from command import Command
+from utils import open_file
+
+
+def import_file(command_exec: Command):
+    command = ''
+    while command.upper() != 'EXIT' and command.upper() != 'N':
+        command = input("Would you like to import a file? [Y/N]")
+
+        if command.upper() not in ["Y", "EXIT", "N"]:
+            print("Invalid option")
+            continue
+        if command.upper() == "Y":
+            path = input("Could you inform the file path, please?")
+            if path:
+                file = open_file(Path(path))
+                results = command_exec.command_list(file)
+                if results:
+                    [print(result) for result in results]
+                    print('Game Over!')
+                sys.exit(0)
+            else:
+                print("Invalid path")
+                continue
 
 
 def command_input():
-    command = Command()
-    asked = False
-    while True:
-        try:
-            print("Type the command EXIT to quit anytime")
-            q1 = None
-            if not asked:
-                q1 = input("Would you like to import a file? [Y/N]")
-                asked = True
-                if q1 not in ["Y", "EXIT", "N"]:
-                    print("Invalid option")
-                    break
-                if q1 == "Y":
-                    q2 = input("Could you inform the file path, please?")
-                    if q2:
-                        path = command.open_file(q2)
-                        results = command.command_list(path)
-                        if results:
-                            for result in results:
-                                print(result)
-                        break
-                    else:
-                        print("Invalid path")
-                        break
-            if not q1 or q1 != "EXIT":
-                q1 = input("Input your command, please")
-                result = command.execute(q1)
-                if result:
-                    print(result)
-                    break
+    command_exec = Command()
+    command = ''
+    print("Type the command EXIT to quit anytime")
+    import_file(command_exec)
 
-            if q1 == "EXIT":
-                break
+    while command.upper() != 'EXIT':
+        try:
+            command = input("Type a valid command, please (default REPORT)") or 'REPORT'
+            result = command_exec.execute(command)
+            if result:
+                print(result)
+                continue
 
         except ValueError:
             print("Error! This value is not valid. Try again.")
         except Exception as e:
             print("Error! {0}".format(e))
+
+    print('Exited')
+    print('Game Over!')
 
 
 command_input()

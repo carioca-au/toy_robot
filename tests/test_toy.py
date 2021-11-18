@@ -1,6 +1,8 @@
 import unittest
+from pathlib import Path
 
 from command import Command
+from utils import open_file
 
 BOUNDARY = '*********************************************************************************************************'
 
@@ -34,8 +36,8 @@ class Test(unittest.TestCase):
 
     def test_from_file(self):
         # Add your path here
-        path = self.command.open_file("C:\\Users\\Rodrigo\Documents\\toy_test.txt")
-        results = self.command.command_list(path)
+        path = Path(__file__).absolute().parent / "data/toy_test.txt"
+        results = self.command.command_list(open_file(path))
         if results:
             for result in results:
                 print(result)

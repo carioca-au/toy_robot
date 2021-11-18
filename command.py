@@ -1,6 +1,14 @@
 from robot import Robot
 
 
+class CommandException(Exception):
+    pass
+
+
+class ExecuteCommandException(CommandException):
+    pass
+
+
 class Command:
 
     def __init__(self):
@@ -9,18 +17,23 @@ class Command:
         self.valid_commands = ['LEFT', 'RIGHT', 'MOVE', 'REPORT']
         self.robot = Robot()
 
-    def execute(self, cmd):
+    def execute(self, cmd: str) -> str:
+        """
+        Execute each valid command
+        :param cmd:(str) command
+        :return:(str)
+        """
         try:
-            if cmd.startswith('PLACE'):
+            if cmd.upper().startswith('PLACE'):
 
-                cmd = cmd.replace('PLACE', '').replace(' ', '')
+                cmd = cmd.replace('PLACE', '').replace(' ', '').upper()
                 values = cmd.split(',')
-                x = values[0]
-                y = values[1]
+                x = int(values[0])
+                y = int(values[1])
                 f = values[2]
                 self.robot.place_robot(x, y, f)
             else:
-                cmd = cmd.replace(' ', '')
+                cmd = cmd.replace(' ', '').upper()
                 if cmd in self.valid_commands:
                     if cmd == 'LEFT' or cmd == 'RIGHT':
                         self.robot.change_facing_position(cmd)
@@ -30,11 +43,17 @@ class Command:
 
                     elif cmd == 'REPORT':
                         return self.robot.report_position()
+        except ValueError as v:
+            raise ExecuteCommandException(f'Value provided not valid: {v}')
         except Exception as e:
-            # print(e)
-            pass
+            raise ExecuteCommandException(f'There was an issue while executing {cmd} : {e}')
 
-    def command_list(self, command_lines):
+    def command_list(self, command_lines: str) -> list:
+        """
+        Run over list of commands and execute them
+        :param command_lines:(str) big string within all commands
+        :return:(list)
+        """
         try:
             results = []
 
@@ -43,13 +62,7 @@ class Command:
                 if result:
                     results.append(result)
             return results
+        except ExecuteCommandException as ee:
+            raise ee
         except Exception as e:
-            pass
-
-    def open_file(self, file_path):
-        try:
-            f = open(file_path, "r")
-            contents = f.read()
-            return contents
-        except Exception as e:
-            pass
+            raise CommandException(f"There was an issue when reading the commands: {e}")
